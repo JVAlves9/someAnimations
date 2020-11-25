@@ -25,31 +25,31 @@ public class RainDrop {
 		this.gc = gc;
 		this.ran = new Random();
 		this.xPos = 1 + ran.nextInt(( int )this.width);	//randomize the position where the drop spawns
-		this.yPos = 0.0;
+		this.yPos = -ran.nextInt(20);	//randomize the height
 		this.size = 2 + ran.nextInt(8);	//randomize the size of the drop
 		this.fall = 2 + ran.nextInt(8);	//randomize the speed of the drop
 	}
 	
 	public void dropFall () {
-		yPos+=fall;
-		if (yPos > this.height) {
-			line(3,-8);
-		    line(-3,-8);
-		    line(0,-8);
-		    yPos = -1 * ( 10 + ran.nextInt(90) );
-		    xPos = 1 + ran.nextInt( (int) this.width );
+		yPos+=fall;	//make fall
+		if (yPos >= this.height) {
+			line(this.height,4,-6);
+		    line(this.height,-4,-6);
+		    line(this.height,2,-6);	// make object encounter animation
+		    yPos = -1 * ( 10 + ran.nextInt(90) );	//new y position
+		    xPos = 1 + ran.nextInt( (int) this.width );	//new x position
 		}
 	}
 	
-	private void line (double x, double y) {
+	private void line (double y0,double x, double y1) {	//make a line
 		gc.beginPath();
-		gc.moveTo(xPos, yPos);
-		gc.lineTo(xPos + x, yPos + y);
+		gc.moveTo(xPos, y0);
+		gc.lineTo(xPos + x, y0 + y1);
+		gc.stroke();
 	}
 	
 	public void rain() {
-		gc.stroke();
-		line(0, size);
+		line(yPos,0, size);
 	}
 
 }
