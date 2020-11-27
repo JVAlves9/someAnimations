@@ -11,8 +11,12 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.layout.AnchorPane;
 
 public class Controller implements Initializable {
+	
+	@FXML
+	private AnchorPane ancr;
 
     @FXML
     private Canvas canvas;
@@ -31,15 +35,20 @@ public class Controller implements Initializable {
     private RainDrop[] rdArray;
     
     private AnimationTimer ani0;
-    
-    public void draw() {
-    	gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-    		for( RainDrop rd : rdArray) {
-    			rd.rain();
-    			rd.dropFall();
-    		}
+
+    private void widthChanged(double width) {	//updates width
+    	System.out.println(Main.stage.getWidth() / 648);
+    	canvas.setWidth(width);
+    	for(RainDrop rd : rdArray)
+    		rd.setWidth(width);
     }
     
+    private void heightChanged(double height) {	//updates height
+    	canvas.setHeight(height);
+    	for(RainDrop rd : rdArray)
+    		rd.setHeight(height);
+    }
+
     public void changeTab() {	//stops or starts the animation if tab1 is selected or not
     	if( tab1.isSelected())
     		ani0.start();
@@ -49,8 +58,17 @@ public class Controller implements Initializable {
     
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
+		
+		Main.stage.heightProperty().addListener( ( ob, oldVal, newVal ) -> {	//listener for height changes
+			heightChanged( (double) newVal - 69.0);
+		});
+		
+		Main.stage.widthProperty().addListener( ( ob, oldVal, newVal ) -> {		//listener for width changes
+			widthChanged( (double) newVal );
+		});
+		
 		gc = canvas.getGraphicsContext2D();
-		rdArray = new RainDrop[500];	//all droplets
+		rdArray = new RainDrop[1000];	//all droplets
 		for (int i = 0; i < rdArray.length; i ++)
 			rdArray[i] = new RainDrop(canvas.getWidth(), canvas.getHeight(), gc);	//populate the array
 		ani0 = new Animation();
@@ -70,10 +88,15 @@ public class Controller implements Initializable {
 		}
 		
 		private void doHandle() {
+			double widthRatio = Main.stage.getWidth() / 648;
 			gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());	//clear the canvas for new drawings
-			for(RainDrop rd : rdArray) {
-				rd.rain();	//draw droplets
-				rd.dropFall();	//add to y to make it closer to the bottom
+			for( int i = 0; i < rdArray.length; i++) {
+				rdArray[i].drawAndFall();	//draw droplets
+					//add to y to make it closer to the bottom
+				if(widthRatio < 1.2 && i == 400)	// get less drops with less space
+					break;
+				else if(widthRatio < 1.7 && i == 700)
+					break;
 			}
 		}
 		

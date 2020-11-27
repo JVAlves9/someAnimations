@@ -13,7 +13,7 @@ public class RainDrop {
 	private double yPos;	//Position of the rain drop
 	
 	private double height;
-	private double width;	//dimensions of the canvas
+	public double width;	//dimensions of the canvas
 	
 	private Random ran;
 	
@@ -30,7 +30,8 @@ public class RainDrop {
 		this.fall = 2 + ran.nextInt(8);	//randomize the speed of the drop
 	}
 	
-	public void dropFall () {
+	public void drawAndFall () {
+		line(yPos,0, size);
 		yPos+=fall;	//make fall
 		if (yPos >= this.height) {
 			line(this.height,4,-6);
@@ -48,8 +49,12 @@ public class RainDrop {
 		gc.stroke();
 	}
 	
-	public void rain() {
-		line(yPos,0, size);
+	public void setWidth(double width) {
+		this.width = width;
+	}
+	
+	public void setHeight(double height) {
+		this.height = height;
 	}
 
 }
